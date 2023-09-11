@@ -8,8 +8,12 @@ FROM "clickhouse/clickhouse-server:21.8" as clickhouse
 FROM ${BUILD_FROM}
 
 # Download and install s6-overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64.tar.gz /tmp/
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
+RUN apt-get update && \
+    apt-get install -y wget && \
+    wget -O /tmp/s6-overlay-amd64.tar.gz https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64.tar.gz && \
+    tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
+    apt-get remove -y wget && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
