@@ -1,5 +1,3 @@
-#!/bin/bash
-
-# Start the ClickHouse server
-exec clickhouse-server 
+#!/usr/bin/with-contenv bash
+exec s6-setuidgid clickhouse /usr/bin/clickhouse-server --config=/etc/clickhouse-server/config.xml
 
