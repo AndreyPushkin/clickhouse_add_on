@@ -1,0 +1,12 @@
+{
+    "name": "My Awesome Add-on",
+    "version": "1.0.0",
+    "slug": "my_awesome_addon",
+    "description": "This is my awesome Home Assistant add-on.",
+    "arch": ["amd64", "armhf"],
+    "startup": "services",
+    "boot": "auto",
+    "options": {},
+    "schema": {}
+ }
+ 
