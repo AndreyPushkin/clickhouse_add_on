@@ -7,20 +7,25 @@ FROM "clickhouse/clickhouse-server:21.8" as clickhouse
 # Build the actual add-on
 FROM ${BUILD_FROM}
 
+# Download and install s6-overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64.tar.gz /tmp/
+RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
+
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Get ClickHouse from official images
 COPY --from=clickhouse /usr/bin/clickhouse* /usr/bin/
 
-# Create a script that will run the ClickHouse server
-RUN echo -e "#!/bin/bash\n\
-clickhouse-server &\n\
-# Keep the script running\n\
-tail -f /dev/null" > /usr/bin/run.sh && chmod +x /usr/bin/run.sh
+# Create service directories
+RUN mkdir -p /etc/services.d/clickhouse
+COPY run.sh /etc/services.d/clickhouse/run
+
+# Make run script executable
+RUN chmod +x /etc/services.d/clickhouse/run
 
 # Expose ports (for documentation purposes)
 EXPOSE 8124 9000
 
-# Specify the default command to run the script
-CMD ["/usr/bin/run.sh"]
+# Specify the s6 overlay as entrypoint
+ENTRYPOINT ["/init"]
