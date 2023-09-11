@@ -20,7 +20,7 @@ clickhouse-server &\n\
 tail -f /dev/null" > /usr/bin/run.sh && chmod +x /usr/bin/run.sh
 
 # Expose ports (for documentation purposes)
-EXPOSE 8123 9000
+EXPOSE 8124 9000
 
 # Specify the default command to run the script
 CMD ["/usr/bin/run.sh"]
