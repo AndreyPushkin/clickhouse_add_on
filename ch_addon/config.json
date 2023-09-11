@@ -1,12 +1,16 @@
 {
-    "name": "My Awesome Add-on",
+    "name": "My Clickhouse Add-on",
     "version": "1.0.0",
-    "slug": "my_awesome_addon",
-    "description": "This is my awesome Home Assistant add-on.",
+    "slug": "my_clickhouse_addon",
+    "description": "This is my Clickhouse Home Assistant add-on.",
     "arch": ["amd64", "armhf"],
     "startup": "services",
     "boot": "auto",
     "options": {},
+    "ports": {
+        "8123/tcp": 8123,
+        "9000/tcp": 9000
+    },
     "schema": {}
  }
  
