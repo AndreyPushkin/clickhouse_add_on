@@ -1,38 +1,26 @@
-# Specify the base image
-ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:6.2.7
+ ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:6.0.0
+ FROM ${BUILD_FROM}
 
-# Get prebuilt containers from ClickHouse
-FROM clickhouse/clickhouse-server:21.8 AS clickhouse
-
-# Build the actual add-on
-FROM ${BUILD_FROM}
-
-# Download and install s6-overlay
-RUN apt-get update && \
-    apt-get install -y wget && \
-    wget -O /tmp/s6-overlay-amd64.tar.gz https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64.tar.gz && \
-    tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
-    apt-get remove -y wget && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Get ClickHouse binaries from the official images
-COPY --from=clickhouse /usr/bin/clickhouse* /usr/bin/
-COPY --from=clickhouse /etc/clickhouse-server/ /etc/clickhouse-server/
+RUN \
+    apt-get update \
+    && apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        dirmngr \
+        gnupg
 
-# Create service directories for s6-overlay
-RUN mkdir -p /etc/services.d/clickhouse
+RUN \
+    GNUPGHOME=$(mktemp -d) \
+    && GNUPGHOME="$GNUPGHOME" gpg --no-default-keyring --keyring /usr/share/keyrings/clickhouse-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8919F6BD2B48D754 \
+    && rm -r "$GNUPGHOME" \
+    && chmod +r /usr/share/keyrings/clickhouse-keyring.gpg
 
-# Add a script to run ClickHouse
-COPY run.sh /etc/services.d/clickhouse/run
+RUN echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main" | tee /etc/apt/sources.list.d/clickhouse.list
 
-# Make run script executable
-RUN chmod +x /etc/services.d/clickhouse/run
+RUN apt-get update
 
-# Expose necessary ports
-EXPOSE 8124 9000
+RUN apt-get install -y clickhouse-server clickhouse-client
 
-# Specify the s6 overlay as entry point
-ENTRYPOINT ["/init"]
+CMD ["clickhouse-server"]
