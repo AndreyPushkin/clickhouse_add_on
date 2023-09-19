@@ -3,15 +3,19 @@
     "version": "1.0.0",
     "slug": "clickhouse_addon",
     "description": "Clickhouse Home Assistant add-on.",
-    "arch": ["amd64"],
+    "arch": [
+        "amd64"
+    ],
     "startup": "services",
     "boot": "auto",
-    "options": {},
+    "options": {
+        "listen_host": "0.0.0.0"
+    },
     "ports": {
         "8124/tcp": 8124,
         "9000/tcp": 9000,
         "9004/tcp": 9004
     },
-    "schema": {},
-    "listen_host": "0.0.0.0"
+    "schema": {}
 }
+
