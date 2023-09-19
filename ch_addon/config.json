@@ -1,15 +1,16 @@
 {
-    "name": "My Clickhouse Add-on",
+    "name": "Clickhouse Add-on",
     "version": "1.0.0",
-    "slug": "my_clickhouse_addon",
-    "description": "This is my Clickhouse Home Assistant add-on.",
-    "arch": ["amd64", "armhf"],
+    "slug": "clickhouse_addon",
+    "description": "Clickhouse Home Assistant add-on.",
+    "arch": ["amd64"],
     "startup": "services",
     "boot": "auto",
     "options": {},
     "ports": {
         "8124/tcp": 8124,
-        "9000/tcp": 9000
+        "9000/tcp": 9000,
+        "9004/tcp": 9004
     },
     "schema": {}
  }
