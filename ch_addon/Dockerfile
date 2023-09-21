@@ -4,7 +4,7 @@ FROM yandex/clickhouse-server:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-RUN apt-get update && apt-get install -y libcap2-bin
+RUN apt-get update -y && apt-get install -y --verbose-versions libcap2-bin
 
 # Check if ClickHouse binary exists and set capabilities
 RUN if [ -f "/usr/bin/clickhouse" ]; then setcap 'cap_net_bind_service=+ep' /usr/bin/clickhouse; fi
