@@ -7,3 +7,5 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && apt-get install -y libcap2-bin clickhouse-server
 
 EXPOSE 8123 9000 9009 9010
+
+CMD ["clickhouse-server"]
