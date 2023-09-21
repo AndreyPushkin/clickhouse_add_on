@@ -1,20 +1,11 @@
-# Start from the ClickHouse image
 FROM yandex/clickhouse-server:latest
 
 # Set environment for non-interactive mode
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update and install required packages
-RUN apt-get clean \
-    && apt-get update -y \
-    && apt-get install -y libcap2-bin \
-    || cat /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y libcap2-bin && apt-get clean
 
-# Set capabilities for ClickHouse
-RUN setcap cap_sys_nice=+ep /usr/bin/clickhouse-server
+# Check if ClickHouse binary exists and set capabilities
+RUN if [ -f "/usr/bin/clickhouse" ]; then setcap 'cap_net_bind_service=+ep' /usr/bin/clickhouse; fi
 
-# Expose necessary ports
-EXPOSE 8124 9000 9004
-
-# Set the entrypoint to ClickHouse server
-ENTRYPOINT ["clickhouse-server"]
+EXPOSE 8123 9000 9009 9010
